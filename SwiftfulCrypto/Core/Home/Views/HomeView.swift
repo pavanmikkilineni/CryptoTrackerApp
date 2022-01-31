@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     
     @State private var showPortfolio:Bool = false
+    @EnvironmentObject private var vm:HomeViewModel
     
     var body: some View {
         ZStack{
@@ -19,6 +20,15 @@ struct HomeView: View {
             //content layer
             VStack{
                 header
+                columnTitles
+                if !showPortfolio{
+                    allCoinsList
+                      .transition(.move(edge: .leading))
+                }
+                if showPortfolio{
+                   portfolioCoinsList
+                    .transition(.move(edge: .trailing))
+                }
                 Spacer(minLength: 0)
             }
             .padding(.horizontal)
@@ -28,12 +38,14 @@ struct HomeView: View {
     }
 }
 
+// MARK: PREVIEWS
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView{
            HomeView()
                 .navigationBarHidden(true)
         }
+        .environmentObject(dev.vm)
     }
 }
 
@@ -61,6 +73,39 @@ extension HomeView{
                     }
                 }
         }
+    }
+    
+    private var allCoinsList:some View{
+        List{
+            ForEach(vm.allCoins){ coin in
+                CoinRowView(coin: coin, showHoldingsColumn: false)
+            }
+        }
+        .listStyle(PlainListStyle())
+    }
+    
+    private var portfolioCoinsList:some View{
+        List{
+            ForEach(vm.portfolioCoins){ coin in
+                CoinRowView(coin: coin, showHoldingsColumn: true)
+            }
+        }
+        .listStyle(PlainListStyle())
+    }
+    
+    private var columnTitles:some View{
+        HStack{
+            Text("Coin")
+            Spacer()
+            if showPortfolio{
+               Text("Holdings")
+            }
+            Text("Price")
+                .frame(width:UIScreen.main.bounds.width/3.5,alignment: .trailing)
+        }
+        .font(.caption)
+        .foregroundColor(Color.theme.secondaryText)
+        .padding(.horizontal)
     }
     
 }
