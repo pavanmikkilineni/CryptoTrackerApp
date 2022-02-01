@@ -20,6 +20,7 @@ struct HomeView: View {
             //content layer
             VStack{
                 header
+                HomeStatsView(showPortfolio: $showPortfolio)
                 SearchBarView(searchText: $vm.searchText)
                 columnTitles
                 if !showPortfolio{
@@ -78,9 +79,9 @@ extension HomeView{
     
     private var allCoinsList:some View{
         List{
-            ForEach(vm.allCoins){ coin in
-                CoinRowView(coin: coin, showHoldingsColumn: false)
-            }
+                ForEach(vm.allCoins){ coin in
+                    CoinRowView(coin: coin, showHoldingsColumn: false)
+                }
         }
         .listStyle(PlainListStyle())
     }
